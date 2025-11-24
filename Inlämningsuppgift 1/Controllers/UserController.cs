@@ -1,10 +1,9 @@
 ﻿using Inlämningsuppgift_1.Services;
 using Microsoft.AspNetCore.Mvc;
-using static Inlämningsuppgift_1.Services.UserService;
 
 namespace Inlämningsuppgift_1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     
     public class UserController : ControllerBase

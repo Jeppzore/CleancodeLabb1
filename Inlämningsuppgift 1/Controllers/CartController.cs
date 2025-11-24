@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Inlämningsuppgift_1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/carts")]
     [ApiController]
     public class CartController : ControllerBase
     {
