@@ -1,57 +1,73 @@
-﻿namespace Inlämningsuppgift_1.Services
+﻿using Inlämningsuppgift_1.Dtos.Products;
+using Inlämningsuppgift_1.Models;
+using Inlämningsuppgift_1.Repositories;
+
+namespace Inlämningsuppgift_1.Services
 {
-    public class ProductService
+    public class ProductService : IProductService
     {
-        private static readonly List<Product> Products = new List<Product>
-        {
-            new Product { Id = 1, Name = "Pen", Price = 1.5m, Stock = 100 },
-            new Product { Id = 2, Name = "Notebook", Price = 3.0m, Stock = 50 },
-            new Product { Id = 3, Name = "Mug", Price = 6.0m, Stock = 20 }
-        };
+        private readonly IProductRepository _repository;
 
-        public class Product
+        public ProductService(IProductRepository repository)
         {
-            public int Id { get; set; }
-            public string Name { get; set; } = "";
-            public decimal Price { get; set; }
-            public int Stock { get; set; }
+            _repository = repository;
         }
 
-        public List<Product> GetAll() => Products;
-
-        public Product? GetById(int id) => Products.FirstOrDefault(p => p.Id == id);
-
-        public List<Product> Search(string? query)
+        public async Task<IEnumerable<ProductDto>> GetAll()
         {
-            if (string.IsNullOrWhiteSpace(query)) return Products.ToList();
-            var q = query!.ToLowerInvariant();
-           
-            return Products.Where(p => p.Name.ToLowerInvariant().Contains(q) || p.Price.ToString().Contains(q)).ToList();
+            var products = await _repository.GetAll();
+            return products.Select(MapToDto);
         }
 
-        public Product Create(string name, decimal price, int stock)
+        public async Task<ProductDto?> GetById(int id)
         {
-            var newId = Products.Any() ? Products.Max(p => p.Id) + 1 : 1;
-            var p = new Product { Id = newId, Name = name, Price = price, Stock = stock };
-            Products.Add(p);
-            return p;
+            var p = await _repository.GetById(id);
+            if (p == null) return null;
+
+            return MapToDto(p);
         }
 
-        public bool ChangeStock(int id, int delta)
+        public async Task<IEnumerable<ProductDto>> Search(string? query, decimal? maxPrice)
         {
-            var p = GetById(id);
+            var results = await _repository.Search(query);
+            
+            if (maxPrice.HasValue)
+                results = results.Where(x => x.Price <= maxPrice.Value);
+
+            return results.Select(MapToDto);
+        }
+
+        public async Task<ProductDto> Create(CreateProductRequest request)
+        {
+            var product = new Product
+            {
+                Name = request.Name,
+                Price = request.Price,
+                Stock = request.Stock
+            };
+
+            var created = await _repository.Create(product);
+            return MapToDto(created);
+        }
+
+        public async Task<bool> IncreaseStock(int id, int amount)
+        {
+            var p = await _repository.GetById(id);
             if (p == null) return false;
-            p.Stock += delta;
+
+            p.Stock += amount;
+            await _repository.Update(p);
+
             return true;
         }
 
-        public void UpdateProduct(Product p)
-        {
-            var existing = GetById(p.Id);
-            if (existing == null) return;
-            existing.Name = p.Name;
-            existing.Price = p.Price;
-            existing.Stock = p.Stock;
-        }
+        private static ProductDto MapToDto(Product p) =>
+            new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Stock = p.Stock
+            };
     }
 }

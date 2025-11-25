@@ -18,7 +18,6 @@ namespace Inlämningsuppgift_1.Controllers
             _userService = userService;
         }
 
-
         [HttpPost("register")]
         public async Task <IActionResult> Register([FromBody] RegisterRequest req)
         {
