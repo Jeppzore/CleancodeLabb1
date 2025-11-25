@@ -1,4 +1,5 @@
-﻿using Inlämningsuppgift_1.Services;
+﻿using Inlämningsuppgift_1.Models;
+using Inlämningsuppgift_1.Services;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
