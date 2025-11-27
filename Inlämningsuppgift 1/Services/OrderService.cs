@@ -7,10 +7,17 @@ namespace Inlämningsuppgift_1.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _repository;
+        private readonly ICartService _cartService;
+        private readonly IProductService _productService;
 
-        public OrderService(IOrderRepository repository)
+        public OrderService(
+            IOrderRepository repository,
+            ICartService cartService,
+            IProductService productService)
         {
             _repository = repository;
+            _cartService = cartService;
+            _productService = productService;
         }
 
         public async Task<OrderDto> Create(CreateOrderRequest request)
@@ -50,6 +57,55 @@ namespace Inlämningsuppgift_1.Services
                 return null;
 
             return MapToDto(order);
+        }
+
+        
+
+        public async Task<OrderDto> CreateOrderFromCart(int userId)
+        {
+            var cart = await _cartService.Getcart(userId);
+            if (!cart.Items.Any())
+                throw new InvalidOperationException("Cart is empty");
+
+            var orderItems = new List<OrderItem>();
+            decimal total = 0;
+
+            // Validate stock and prepare order items
+            foreach (var item in cart.Items)
+            {
+                var product = await _productService.GetById(item.ProductId);
+                if (product == null)
+                    throw new InvalidOperationException($"Product with ID {item.ProductId} not found");
+
+                if (product.Stock < item.Quantity)
+                    throw new InvalidOperationException($"Insufficient stock for product {product.Name}");
+
+                product.Stock -= item.Quantity;
+                await _productService.Update(product);
+
+                orderItems.Add(new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    Name = product.Name,
+                    Quantity = item.Quantity,
+                    Price = product.Price
+                });
+
+                total += product.Price * item.Quantity;
+            }
+
+            var order = new Order
+            {
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow,
+                Total = total,
+                Items = orderItems
+            };
+
+            var created = await _repository.Create(order);
+            await _cartService.ClearCart(userId);
+
+            return MapToDto(created);
         }
 
         // Helper method to map Order to OrderDto

@@ -31,7 +31,7 @@ namespace Inlämningsuppgift_1.Services
 
                 dto.Items.Add(new CartItemDto
                 {
-                    ProductID = item.ProductId,
+                    ProductId = item.ProductId,
                     ProductName = product.Name,
                     Quantity = item.Quantity,
                     UnitPrice = product.Price,

@@ -9,5 +9,6 @@ namespace Inlämningsuppgift_1.Services
         Task<IEnumerable<ProductDto>> Search(string? query, decimal? maxPrice);
         Task<ProductDto> Create(CreateProductRequest request);
         Task<bool> IncreaseStock(int id, int amount);
+        Task Update(ProductDto product);
     }
 }

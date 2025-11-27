@@ -53,5 +53,15 @@ namespace Inlämningsuppgift_1.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> Update(int id, [FromBody] ProductDto product)
+        {
+            if (id != product.Id)
+                return BadRequest("Product ID mismatch");
+
+            await _service.Update(product);
+            return NoContent();
+        }
     }
 }

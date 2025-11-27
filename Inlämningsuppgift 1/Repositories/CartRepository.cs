@@ -6,18 +6,18 @@ namespace Inlämningsuppgift_1.Repositories
     {
         private static readonly Dictionary<int, List<CartItem>> Carts = new();
 
-        public Task AddToCart(int userId, CartItem item)
+        public Task AddToCart(int userId, int productId, int quantity)
         {
             if (!Carts.ContainsKey(userId))
                 Carts[userId] = new List<CartItem>();
 
             var list = Carts[userId];
-            var existing = list.FirstOrDefault(i => i.ProductId == item.ProductId);
+            var existing = list.FirstOrDefault(i => i.ProductId == productId);
 
             if (existing == null)
-                list.Add(item);
+                list.Add(new CartItem { ProductId = productId, Quantity = quantity });
             else
-                existing.Quantity += item.Quantity;
+                existing.Quantity += quantity;
 
             return Task.CompletedTask;
         }

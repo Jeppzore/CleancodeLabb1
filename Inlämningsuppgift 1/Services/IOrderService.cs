@@ -7,5 +7,6 @@ namespace Inlämningsuppgift_1.Services
         Task<IEnumerable<OrderDto>> GetAll();
         Task<OrderDto?> GetById(int id);
         Task<OrderDto> Create(CreateOrderRequest request);
+        Task<OrderDto> CreateOrderFromCart(int userId);
     }
 }

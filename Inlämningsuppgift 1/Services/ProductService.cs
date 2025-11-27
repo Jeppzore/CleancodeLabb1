@@ -69,5 +69,18 @@ namespace Inlämningsuppgift_1.Services
                 Price = p.Price,
                 Stock = p.Stock
             };
+
+        public Task Update(ProductDto product)
+        {
+            var p = new Product
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                Stock = product.Stock
+            };
+            return _repository.Update(p);
+        }
+        
     }
 }

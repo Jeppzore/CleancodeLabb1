@@ -31,7 +31,7 @@ namespace Inlämningsuppgift_1.Controllers
             return Ok(order);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
         {
             var userId = _authService.GetUserIdFromToken(request.UserId.ToString());
@@ -40,6 +40,25 @@ namespace Inlämningsuppgift_1.Controllers
 
             var createdOrder = await _orderService.Create(request);
             return CreatedAtAction(nameof(Get), new { id = createdOrder.Id }, createdOrder);
+        }
+
+        [HttpPost("createfromcart")]
+        public async Task<IActionResult> CreateFromCart(
+            [FromHeader(Name = "X-Auth-Token")] string token)
+        {
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null)
+                return Unauthorized();
+
+            try
+            {
+                var order = await _orderService.CreateOrderFromCart(userId.Value);
+                return Ok(new { OrderId = order.Id, order.Total });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
