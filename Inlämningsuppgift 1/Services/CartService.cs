@@ -1,42 +1,49 @@
-﻿namespace Inlämningsuppgift_1.Services
+﻿using Inlämningsuppgift_1.Dtos.Carts;
+using Inlämningsuppgift_1.Models;
+using Inlämningsuppgift_1.Repositories.Carts;
+
+namespace Inlämningsuppgift_1.Services
 {
-    public class CartService
+    public class CartService : ICartService
     {
-      
-        private static readonly Dictionary<int, List<CartItem>> Carts = new Dictionary<int, List<CartItem>>();
 
-        public class CartItem
+        private readonly ICartRepository _repository;
+        private readonly IProductService _productService;
+
+        public CartService(ICartRepository repository, IProductService productService)
         {
-            public int ProductId { get; set; }
-            public int Quantity { get; set; }
+            _repository = repository;
+            _productService = productService;
         }
 
-        public void AddToCart(int userId, int productId, int quantity)
+        public Task AddItem(int userId, int productId, int quantity)
+            => _repository.AddToCart(userId, productId, quantity);
+
+        public async Task<CartDto> Getcart(int userId)
         {
-            if (!Carts.ContainsKey(userId)) Carts[userId] = new List<CartItem>();
-            var list = Carts[userId];
-            var existing = list.FirstOrDefault(ci => ci.ProductId == productId);
-            if (existing == null) list.Add(new CartItem { ProductId = productId, Quantity = quantity });
-            else existing.Quantity += quantity;
+            var items = await _repository.GetCart(userId);
+            var dto = new CartDto();
+
+            foreach (var item in items)
+            {
+                var product = await _productService.GetById(item.ProductId);
+                if (product == null) continue; // Skip if product not found
+
+                dto.Items.Add(new CartItemDto
+                {
+                    ProductId = item.ProductId,
+                    ProductName = product.Name,
+                    Quantity = item.Quantity,
+                    UnitPrice = product.Price,
+                });
+            }
+            return dto;
         }
 
-        public IEnumerable<CartItem> GetCartForUser(int userId)
-        {
-            if (!Carts.ContainsKey(userId)) return Enumerable.Empty<CartItem>();
-            return Carts[userId];
-        }
+        public Task ClearCart(int userId)
+            => _repository.ClearCart(userId);
 
-        public void RemoveFromCart(int userId, int productId)
-        {
-            if (!Carts.ContainsKey(userId)) return;
-            var list = Carts[userId];
-            var existing = list.FirstOrDefault(ci => ci.ProductId == productId);
-            if (existing != null) list.Remove(existing);
-        }
-
-        public void ClearCart(int userId)
-        {
-            if (Carts.ContainsKey(userId)) Carts[userId].Clear();
-        }
+        public Task RemoveItem(int userId, int productId)
+            => _repository.RemoveFromCart(userId, productId);
     }
 }

@@ -1,51 +1,67 @@
-﻿using Inlämningsuppgift_1.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Inlämningsuppgift_1.Dtos.Products;
+using Inlämningsuppgift_1.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inlämningsuppgift_1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public partial class ProductController : ControllerBase
     {
-        private readonly ProductService _service = new ProductService();
+        private readonly IProductService _service;
 
-        public class CreateProductRequest { public string Name { get; set; } = ""; public decimal Price { get; set; } public int Stock { get; set; } }
+        public ProductController(IProductService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
-        public IActionResult GetAll() => Ok(_service.GetAll());
+        public async Task<IActionResult> GetAll()
+            => Ok(await _service.GetAll());
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var p = _service.GetById(id);
+            var p = await _service.GetById(id);
             if (p == null) return NotFound();
+
             return Ok(p);
         }
 
         [HttpGet("search")]
-        public IActionResult Search([FromQuery] string q, [FromQuery] decimal? maxPrice)
-        {            
-            var results = _service.Search(q);
-            if (maxPrice.HasValue) results = results.Where(x => x.Price <= maxPrice.Value).ToList();
-            return Ok(results);
-        }
+        public async Task<IActionResult> Search([FromQuery] string q, [FromQuery] decimal? maxPrice)
+            => Ok(await _service.Search(q, maxPrice));
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateProductRequest req)
+        public async Task<IActionResult> Create([FromBody] CreateProductRequest req)
         {
-            if (string.IsNullOrWhiteSpace(req.Name)) return BadRequest("Name required.");
-            var created = _service.Create(req.Name, req.Price, req.Stock);
+            if (string.IsNullOrEmpty(req.Name))
+                return BadRequest("Name is required");
+
+            var created = await _service.Create(req);
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
         [HttpPost("{id}/stock/increase")]
-        public IActionResult IncreaseStock(int id, [FromQuery] int amount)
+        public async Task <IActionResult> IncreaseStock(int id, [FromQuery] int amount)
         {           
-            if (amount <= 0) return BadRequest("Amount must be > 0");
-            var ok = _service.ChangeStock(id, amount);
+            if (amount <= 0)
+                return BadRequest("Amount must be greater than zero");
+
+            var ok = await _service.IncreaseStock(id, amount);
             if (!ok) return NotFound();
-            return Ok();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> Update(int id, [FromBody] ProductDto product)
+        {
+            if (id != product.Id)
+                return BadRequest("Product ID mismatch");
+
+            await _service.Update(product);
+            return NoContent();
         }
     }
 }

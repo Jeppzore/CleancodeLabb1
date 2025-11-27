@@ -1,53 +1,58 @@
-﻿using Inlämningsuppgift_1.Services;
+﻿using Inlämningsuppgift_1.Dtos.Users;
+using Inlämningsuppgift_1.Services;
 using Microsoft.AspNetCore.Mvc;
-using static Inlämningsuppgift_1.Services.UserService;
 
 namespace Inlämningsuppgift_1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     
     public class UserController : ControllerBase
     {
-        private readonly UserService _service = new UserService();
-        
-        public class LoginRequest { public string Username { get; set; } = ""; public string Password { get; set; } = ""; }
-        public class RegisterRequest { public string Username { get; set; } = ""; public string Password { get; set; } = ""; public string Email { get; set; } = ""; }
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+
+        public UserController(IAuthService authService, IUserService userService)
+        {
+            _authService = authService;
+            _userService = userService;
+        }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterRequest req)
+        public async Task <IActionResult> Register([FromBody] RegisterRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.Username) || string.IsNullOrWhiteSpace(req.Password))
                 return BadRequest("Username and password required.");
 
-            var created = _service.Register(req.Username, req.Password, req.Email);
+            var created = await _authService.Register(req);
             if (!created) return Conflict("User already exists.");
 
             return Ok(new { Message = "Registered" });
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest req)
+        public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.Username) || string.IsNullOrWhiteSpace(req.Password))
                 return BadRequest("Missing credentials.");
 
-            var token = _service.Login(req.Username, req.Password);
+            var token = await _authService.Login(req);
             if (token == null) return Unauthorized("Invalid credentials.");
                        
             return Ok(new { Token = token });
         }
 
         [HttpGet("profile")]
-        public IActionResult Profile([FromHeader(Name = "X-Auth-Token")] string token)
+        public async Task<IActionResult> Profile([FromHeader(Name = "X-Auth-Token")] string token)
         {
-            
             if (string.IsNullOrWhiteSpace(token)) return Unauthorized();
 
-            var profile = _service.GetUserByToken(token);
-            if (profile == null) return Unauthorized();
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null) return Unauthorized();
 
-            return Ok(new { profile.Username, profile.Email, profile.Id });
+            var profile = await _userService.GetProfile(userId.Value);
+
+            return Ok(profile);
         }
     }
 }
