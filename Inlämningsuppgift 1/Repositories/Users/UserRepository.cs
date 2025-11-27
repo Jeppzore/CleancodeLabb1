@@ -1,6 +1,6 @@
 ﻿using Inlämningsuppgift_1.Models;
 
-namespace Inlämningsuppgift_1.Repositories
+namespace Inlämningsuppgift_1.Repositories.Users
 {
     public class UserRepository : IUserRepository
     {

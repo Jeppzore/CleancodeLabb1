@@ -1,6 +1,6 @@
 ﻿using Inlämningsuppgift_1.Dtos.Products;
 using Inlämningsuppgift_1.Models;
-using Inlämningsuppgift_1.Repositories;
+using Inlämningsuppgift_1.Repositories.Products;
 
 namespace Inlämningsuppgift_1.Services
 {

@@ -1,4 +1,6 @@
-using Inlämningsuppgift_1.Repositories;
+using Inlämningsuppgift_1.Repositories.Carts;
+using Inlämningsuppgift_1.Repositories.Products;
+using Inlämningsuppgift_1.Repositories.Users;
 using Inlämningsuppgift_1.Services;
 
 var builder = WebApplication.CreateBuilder(args);

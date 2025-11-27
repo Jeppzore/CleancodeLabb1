@@ -1,6 +1,6 @@
 ﻿using Inlämningsuppgift_1.Dtos.Carts;
 using Inlämningsuppgift_1.Models;
-using Inlämningsuppgift_1.Repositories;
+using Inlämningsuppgift_1.Repositories.Carts;
 
 namespace Inlämningsuppgift_1.Services
 {

@@ -1,6 +1,6 @@
 ﻿using Inlämningsuppgift_1.Dtos.Orders;
 using Inlämningsuppgift_1.Models;
-using Inlämningsuppgift_1.Repositories;
+using Inlämningsuppgift_1.Repositories.Orders;
 
 namespace Inlämningsuppgift_1.Services
 {
@@ -58,8 +58,6 @@ namespace Inlämningsuppgift_1.Services
 
             return MapToDto(order);
         }
-
-        
 
         public async Task<OrderDto> CreateOrderFromCart(int userId)
         {

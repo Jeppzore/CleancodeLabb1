@@ -1,6 +1,6 @@
 ﻿using Inlämningsuppgift_1.Models;
 
-namespace Inlämningsuppgift_1.Repositories
+namespace Inlämningsuppgift_1.Repositories.Orders
 {
     public class OrderRepository : IOrderRepository
     {
@@ -37,6 +37,7 @@ namespace Inlämningsuppgift_1.Repositories
         {
             order.Id = Orders.Max(o => o.Id) + 1;
             Orders.Add(order);
+
             return Task.FromResult(order);
         }
 
@@ -61,6 +62,7 @@ namespace Inlämningsuppgift_1.Repositories
                 return Task.FromResult(false);
 
             Orders.Remove(existing);
+
             return Task.FromResult(true);
         }
     }

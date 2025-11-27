@@ -32,12 +32,15 @@ namespace Inlämningsuppgift_1.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
+        public async Task<IActionResult> Create(
+            [FromHeader(Name = "X-Auth-Token")] string token,
+            [FromBody] CreateOrderRequest request)
         {
-            var userId = _authService.GetUserIdFromToken(request.UserId.ToString());
+            var userId = await _authService.GetUserIdFromToken(token);
             if (userId == null)
-                return Forbid();
+                return Unauthorized();
 
+            request.UserId = userId.Value;
             var createdOrder = await _orderService.Create(request);
             return CreatedAtAction(nameof(Get), new { id = createdOrder.Id }, createdOrder);
         }
