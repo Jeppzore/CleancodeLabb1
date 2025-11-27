@@ -1,4 +1,4 @@
-﻿namespace Inlämningsuppgift_1.Dtos
+﻿namespace Inlämningsuppgift_1.Dtos.Users
 {
     public class RegisterRequest
     {

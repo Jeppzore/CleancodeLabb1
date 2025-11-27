@@ -1,4 +1,4 @@
-﻿using Inlämningsuppgift_1.Dtos;
+﻿using Inlämningsuppgift_1.Dtos.Users;
 
 namespace Inlämningsuppgift_1.Services
 {

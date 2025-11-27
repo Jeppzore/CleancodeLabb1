@@ -1,4 +1,4 @@
-﻿using Inlämningsuppgift_1.Dtos;
+﻿using Inlämningsuppgift_1.Dtos.Users;
 using Inlämningsuppgift_1.Models;
 using Inlämningsuppgift_1.Repositories;
 

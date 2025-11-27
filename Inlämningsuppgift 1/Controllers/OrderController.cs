@@ -1,7 +1,5 @@
-﻿using Inlämningsuppgift_1.Models;
+﻿using Inlämningsuppgift_1.Dtos.Orders;
 using Inlämningsuppgift_1.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inlämningsuppgift_1.Controllers
@@ -10,54 +8,38 @@ namespace Inlämningsuppgift_1.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly OrderService _orderService = new OrderService();
-        private readonly CartService _cartService = new CartService();
-        private readonly ProductService _productService = new ProductService();
-        private readonly UserService _userService = new UserService();
+        private readonly IOrderService _orderService;
+        private readonly IAuthService _authService;
 
-        [HttpPost("create")]
-        public IActionResult CreateOrder([FromHeader(Name = "X-Auth-Token")] string token)
+        public OrderController(IOrderService orderService, IAuthService authService)
         {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
-
-            var cart = _cartService.GetCartForUser(user.Id).ToList();
-            if (!cart.Any()) return BadRequest("Cart is empty");
-
-            var orderItems = new List<object>();
-            decimal total = 0m;
-
-            foreach (var ci in cart)
-            {
-                var product = _productService.GetById(ci.ProductId);
-                if (product == null) return BadRequest($"Product {ci.ProductId} missing.");
-                if (product.Stock < ci.Quantity) return BadRequest($"Not enough stock for {product.Name}.");
-
-                product.Stock -= ci.Quantity;
-                _productService.UpdateProduct(product);
-
-                orderItems.Add(new { product.Id, product.Name, ci.Quantity, product.Price });
-                total += product.Price * ci.Quantity;
-            }
-
-            var order = _orderService.CreateOrder(user.Id, orderItems, total);
-
-            _cartService.ClearCart(user.Id);
-
-            return Ok(new { OrderId = order.Id, Total = total });
+            _orderService = orderService;
+            _authService = authService;
         }
 
-        [HttpGet("{orderId}")]
-        public IActionResult GetOrder(int orderId, [FromHeader(Name = "X-Auth-Token")] string token)
-        {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+            => Ok(await _orderService.GetAll());
 
-            var order = _orderService.Get(orderId);
-            if (order == null) return NotFound();
-            if (order.UserId != user.Id) return Forbid();
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var order = await _orderService.GetById(id);
+            if (order == null)
+                return NotFound();
 
             return Ok(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
+        {
+            var userId = _authService.GetUserIdFromToken(request.UserId.ToString());
+            if (userId == null)
+                return Forbid();
+
+            var createdOrder = await _orderService.Create(request);
+            return CreatedAtAction(nameof(Get), new { id = createdOrder.Id }, createdOrder);
         }
     }
 }

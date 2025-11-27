@@ -1,4 +1,5 @@
-﻿using Inlämningsuppgift_1.Models;
+﻿using Inlämningsuppgift_1.Dtos.Carts;
+using Inlämningsuppgift_1.Models;
 using Inlämningsuppgift_1.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,58 +9,64 @@ namespace Inlämningsuppgift_1.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-        private readonly CartService _service = new CartService();
-        private readonly UserService _userService = new UserService(); 
+        private readonly ICartService _cartService;
+        private readonly IAuthService _authService;
 
-        public class AddItemRequest { public int ProductId { get; set; } public int Quantity { get; set; } }
+        public CartController(ICartService cartService, IAuthService authService)
+        {
+            _cartService = cartService;
+            _authService = authService;
+        }
 
         [HttpPost("add")]
-        public IActionResult AddItem([FromHeader(Name = "X-Auth-Token")] string token, [FromBody] AddItemRequest req)
+        public async Task<IActionResult> AddItem(
+            [FromHeader(Name = "X-Auth-Token")] string token,
+            [FromBody] AddCartItemRequest request)
         {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null)
+                return Unauthorized("Invalid or missing authentication token.");
 
-            if (req.Quantity <= 0) return BadRequest("Quantity must be > 0");
-                        
-            _service.AddToCart(user.Id, req.ProductId, req.Quantity);
-            return Ok();
+            if (request.Quantity <= 0)
+                return BadRequest("Quantity must be greater than zero.");
+
+            await _cartService.AddItem(userId.Value, request.ProductId, request.Quantity);
+            return Ok("Item added to cart.");
         }
 
         [HttpGet("me")]
-        public IActionResult GetCart([FromHeader(Name = "X-Auth-Token")] string token)
+        public async Task<IActionResult> GetCart(
+            [FromHeader(Name = "X-Auth-Token")] string token)
         {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null)
+                return Unauthorized("Invalid or missing authentication token.");
 
-            var cart = _service.GetCartForUser(user.Id);
-            
-            var productService = new ProductService();
-            var detailed = cart.Select(ci =>
-            {
-                var p = productService.GetById(ci.ProductId);
-                return new { ci.ProductId, ProductName = p?.Name, ci.Quantity, UnitPrice = p?.Price };
-            });
-            return Ok(detailed);
+            return Ok(await _cartService.Getcart(userId.Value));
         }
 
         [HttpPost("remove")]
-        public IActionResult RemoveItem([FromHeader(Name = "X-Auth-Token")] string token, [FromQuery] int productId)
+        public async Task<IActionResult> RemoveItem(
+        [FromHeader(Name = "X-Auth-Token")] string token,
+        [FromQuery] int productId)
         {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null) return Unauthorized();
 
-            _service.RemoveFromCart(user.Id, productId);
+            await _cartService.RemoveItem(userId.Value, productId);
             return Ok();
         }
 
         [HttpPost("clear")]
-        public IActionResult ClearCart([FromHeader(Name = "X-Auth-Token")] string token)
+        public async Task<IActionResult> ClearCart(
+            [FromHeader(Name = "X-Auth-Token")] string token)
         {
-            var user = _userService.GetUserByToken(token);
-            if (user == null) return Unauthorized();
+            var userId = await _authService.GetUserIdFromToken(token);
+            if (userId == null) return Unauthorized();
 
-            _service.ClearCart(user.Id);
+            await _cartService.ClearCart(userId.Value);
             return Ok();
         }
     }
+        
 }

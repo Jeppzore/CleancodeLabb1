@@ -1,8 +1,6 @@
 ﻿using Inlämningsuppgift_1.Dtos.Products;
 using Inlämningsuppgift_1.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Inlämningsuppgift_1.Controllers
 {
