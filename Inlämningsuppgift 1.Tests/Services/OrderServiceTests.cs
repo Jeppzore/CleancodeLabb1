@@ -69,7 +69,7 @@ namespace Inlämningsuppgift_1.Tests.Services
             );
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() =>
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 service.CreateOrderFromCart(1));
         }
 

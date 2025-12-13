@@ -1,4 +1,5 @@
-﻿using Inlämningsuppgift_1.Repositories.Carts;
+﻿using Inlämningsuppgift_1.Dtos.Products;
+using Inlämningsuppgift_1.Repositories.Carts;
 using Inlämningsuppgift_1.Services;
 using Moq;
 
@@ -11,9 +12,17 @@ namespace Inlämningsuppgift_1.Tests.Services
         {
             // Arrange (FAKE)
             var cartRepo = new CartRepository();
-            var productService = new Mock<IProductService>().Object;
 
-            var service = new CartService(cartRepo, productService);
+            var productService = new Mock<IProductService>();
+            productService.Setup(p => p.GetById(10))
+                .ReturnsAsync(new ProductDto
+                {
+                    Id = 10,
+                    Name = "Test Product",
+                    Price = 50,
+                });
+
+            var service = new CartService(cartRepo, productService.Object);
 
             // Act
 
