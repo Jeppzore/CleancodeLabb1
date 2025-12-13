@@ -11,7 +11,7 @@ namespace Inlämningsuppgift_1.Repositories.Orders
             Id = 1,
             UserId = 1,
             CreatedAt = DateTime.UtcNow,
-            Total = 100.00m,
+            TotalPrice = 100.00m,
             Items = new List<OrderItem>()
         },
         new Order
@@ -19,7 +19,7 @@ namespace Inlämningsuppgift_1.Repositories.Orders
             Id = 2,
             UserId = 2,
             CreatedAt = DateTime.UtcNow,
-            Total = 150.50m,
+            TotalPrice = 150.50m,
             Items = new List<OrderItem>()
         },
     };
@@ -49,7 +49,7 @@ namespace Inlämningsuppgift_1.Repositories.Orders
 
             existing.UserId = updated.UserId;
             existing.CreatedAt = updated.CreatedAt;
-            existing.Total = updated.Total;
+            existing.TotalPrice = updated.TotalPrice;
             existing.Items = updated.Items;
 
             return Task.FromResult<Order?>(existing);

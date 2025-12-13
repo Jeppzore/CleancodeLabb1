@@ -4,7 +4,6 @@ namespace Inlämningsuppgift_1.Repositories.Orders
 {
     public interface IOrderRepository
     {
-        // Define method signatures for order-related data operations
         Task<Order?> GetById(int id);
         Task<IEnumerable<Order>> GetAll();
         Task<Order> Create(Order order);

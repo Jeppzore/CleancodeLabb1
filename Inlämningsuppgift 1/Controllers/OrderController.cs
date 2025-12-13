@@ -56,7 +56,7 @@ namespace Inlämningsuppgift_1.Controllers
             try
             {
                 var order = await _orderService.CreateOrderFromCart(userId.Value);
-                return Ok(new { OrderId = order.Id, order.Total });
+                return Ok(new { OrderId = order.Id, order.TotalPrice });
             }
             catch (Exception ex)
             {

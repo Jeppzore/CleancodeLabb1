@@ -1,5 +1,4 @@
 ﻿using Inlämningsuppgift_1.Dtos.Carts;
-using Inlämningsuppgift_1.Models;
 
 namespace Inlämningsuppgift_1.Services
 {

@@ -1,5 +1,4 @@
 ﻿using Inlämningsuppgift_1.Dtos.Carts;
-using Inlämningsuppgift_1.Models;
 using Inlämningsuppgift_1.Repositories.Carts;
 
 namespace Inlämningsuppgift_1.Services
@@ -27,7 +26,7 @@ namespace Inlämningsuppgift_1.Services
             foreach (var item in items)
             {
                 var product = await _productService.GetById(item.ProductId);
-                if (product == null) continue; // Skip if product not found
+                if (product == null) continue;
 
                 dto.Items.Add(new CartItemDto
                 {

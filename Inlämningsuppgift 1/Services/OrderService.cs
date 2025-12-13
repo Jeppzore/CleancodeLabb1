@@ -36,7 +36,7 @@ namespace Inlämningsuppgift_1.Services
             {
                 UserId = request.UserId,
                 CreatedAt = DateTime.UtcNow,
-                Total = total,
+                TotalPrice = total,
                 Items = items
             };
 
@@ -96,7 +96,7 @@ namespace Inlämningsuppgift_1.Services
             {
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow,
-                Total = total,
+                TotalPrice = total,
                 Items = orderItems
             };
 
@@ -113,7 +113,7 @@ namespace Inlämningsuppgift_1.Services
                 Id = order.Id,
                 UserId = order.UserId,
                 CreatedAt = order.CreatedAt,
-                Total = order.Total,
+                TotalPrice = order.TotalPrice,
                 Items = order.Items.Select(item => new OrderItemDto
                 {
                     ProductId = item.ProductId,
