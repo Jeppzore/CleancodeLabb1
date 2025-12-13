@@ -1,4 +1,6 @@
 <Solution>
-  <Project Path="Inlämningsuppgift 1.Tests/Inlämningsuppgift 1.Tests.csproj" Id="cb2d1e3b-68cf-423b-b9ba-324ddc72faa9" />
+  <Project Path="Inlämningsuppgift 1.Tests/Inlämningsuppgift 1.Tests.csproj" Id="cb2d1e3b-68cf-423b-b9ba-324ddc72faa9">
+    <BuildDependency Project="Inlämningsuppgift 1/Inlämningsuppgift 1.csproj" />
+  </Project>
   <Project Path="Inlämningsuppgift 1/Inlämningsuppgift 1.csproj" />
 </Solution>
