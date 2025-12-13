@@ -19,8 +19,8 @@ Nedan beskrivs fem separata problem som identifierades i den ursprungliga koden.
 ### Problem 1: Controllers innehöll affärslogik
 
 **Beskrivning:**  
-Controllers ansvarade inte bara för HTTP-hantering utan innehöll även logik
-för order-skapande, lagerkontroller, cart-hantering och prisberäkningar.
+Controllers ansvarade inte enbart för HTTP-hantering,
+utan innehöll även affärslogik såsom order­skapande, lagerkontroller, cart-hantering och prisberäkningar.
 
 **Bruten princip / anti-pattern:**
 - Single Responsibility Principle (SRP)
@@ -36,8 +36,8 @@ HTTP-kommunikation.
 ### Problem 2: Hård koppling mellan klasser (`new`-anrop)
 
 **Beskrivning:**  
-Controllers skapade själva sina beroenden via `new`, vilket skapade stark
-koppling mellan klasser.
+Controllers skapade själva sina beroenden via `new`, vilket resulterade
+i en stark koppling mellan klasser.
 
 ```csharp
 var service = new CartService();
@@ -56,7 +56,7 @@ som injiceras via konstruktorer.
 
 **Beskrivning:**  
 Data lagrades direkt i services via statiska listor och dictionaries.
-Services fungerade både som affärslogik och datalager.
+Services fungerade därmed både som affärslogik och datalager.
 
 **Bruten princip / problem:**  
 - Single Responsibility Principle  
@@ -122,7 +122,9 @@ Starkt typade modeller infördes, t.ex. `OrderItem`.
 ### Övergripande strategi
 
 Tester är främst skrivna för **service-lagret**, eftersom det är där
-affärslogiken finns.  
+affärslogiken finns. Detta gör att testerna fokuserar på affärsregler 
+snarare än tekniska detaljer.
+
 Controllers testas endast i begränsad omfattning, då de är tunna och
 huvudsakligen vidarebefordrar anrop.
 
@@ -186,7 +188,7 @@ Totalt ca **8 enhetstester**, vilket ger god täckning utan att övertesta.
 - Tydligare ansvarsfördelning  
 - Mer testbar kod  
 - Lättare att förstå och vidareutveckla  
-- Affärsregler verifieras med enhetstester  
+- Affärsregler verifieras nu tydligt med enhetstester
 
 ---
 
@@ -204,6 +206,6 @@ Totalt ca **8 enhetstester**, vilket ger god täckning utan att övertesta.
 ## Avslutning
 
 Efter refaktoreringen följer API:et i hög grad SOLID-principerna och Clean Code.
-Lösningen är körbar, testad och redo för vidare utveckling.
+Lösningen är körbar, testad och utgör en stabil grund för vidare utveckling.
 
 / Jesper Stranne 2025-12-14
