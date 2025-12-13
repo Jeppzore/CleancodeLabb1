@@ -1,21 +1,22 @@
-# Inlämningsuppgift 1
 # ASP.NET Web API – Clean Code & SOLID
 
-Detta projekt är ett refaktorerat ASP.NET Web API för en enkel WebShop.
-Fokus har legat på:
+This project is a refactored ASP.NET Web API for a simple WebShop application.
 
-- Clean Code
-- SOLID-principerna
+The main focus of the refactoring was to apply:
+
+- Clean Code principles
+- SOLID principles
 - Repository Pattern
 - Dependency Injection
-- Enhetstester med xUnit och Moq
+- Unit testing with xUnit and Moq
 
-Projektet är en del av en skoluppgift där målet var att identifiera design-
-och arkitekturproblem samt åtgärda dessa genom refaktorering.
+The project was created as part of a school assignment with the goal of
+identifying design and architectural issues and resolving them through
+refactoring.
 
 ---
 
-## Tekniker & verktyg
+## Technologies & Tools
 
 - ASP.NET Core Web API
 - C#
@@ -25,19 +26,25 @@ och arkitekturproblem samt åtgärda dessa genom refaktorering.
 
 ---
 
-## Tester
+## Testing
 
-Affärslogiken testas främst i service-lagret.
-Mock, stub och fake används för att isolera beroenden och verifiera beteende.
+Business logic is primarily tested at the **service layer**, where most of the
+application rules reside.
+
+Mocks, stubs, and fakes are used to isolate dependencies and verify behavior
+without relying on external infrastructure.
 
 ---
 
-## Dokumentation
+## Documentation
 
-En mer detaljerad genomgång av:
-- identifierade designproblem
-- SOLID-överträdelser
-- refaktorering
-- teststrategi
+A more detailed explanation of:
 
-finns i [`DOCUMENTATION.md`](DOCUMENTATION.md).
+- identified design and architectural problems
+- SOLID violations
+- refactoring decisions
+- test strategy
+
+can be found in [`DOCUMENTATION.md`](DOCUMENTATION.md).
+DOCUMENTATION.md is written in Swedish and is mainly intended for 
+the school project and personal development.
