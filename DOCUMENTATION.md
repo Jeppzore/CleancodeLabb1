@@ -207,5 +207,3 @@ Totalt ca **8 enhetstester**, vilket ger god täckning utan att övertesta.
 
 Efter refaktoreringen följer API:et i hög grad SOLID-principerna och Clean Code.
 Lösningen är körbar, testad och utgör en stabil grund för vidare utveckling.
-
-/ Jesper Stranne 2025-12-14
