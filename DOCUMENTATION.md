@@ -77,8 +77,7 @@ Request- och response-klasser låg ibland i controllers eller blandades
 med domänmodeller.
 
 **Bruten princip:**  
-- Single Responsibility Principle  
-- Clean Code-principer  
+- Single Responsibility Principle
 
 **Åtgärd:**  
 DTOs flyttades till separata mappar.  
@@ -92,16 +91,16 @@ Domänmodeller används internt, DTOs används endast för API-kommunikation.
 Exempelvis användes `List<object>` för orderrader.
 
 **Problem:**  
-- Svår att förstå  
-- Svår att testa  
-- Risk för runtime-fel  
+- Svår att vidareutveckla  
+- Svår att testa
+- Svag typning
+- Ökar risk för fel
 
 **Bruten princip:**  
-- Clean Code  
 - Indirekt brott mot Open/Closed Principle  
 
 **Åtgärd:**  
-Starkt typade modeller infördes, t.ex. `OrderItem`.
+Tydligt typade modeller infördes, t.ex. `OrderItem`.
 
 ---
 
@@ -113,7 +112,7 @@ Starkt typade modeller infördes, t.ex. `OrderItem`.
 | `new`-anrop i controllers | DIP |
 | Persistens i services | SRP |
 | Blandade DTOs/modeller | SRP |
-| Svag typning | Clean Code |
+| Svag typning (`List<object>`) | Type Safety, indirekt OCP |
 
 ---
 
