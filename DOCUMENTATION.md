@@ -193,13 +193,12 @@ Totalt ca **8 enhetstester**, vilket ger god täckning utan att övertesta.
 
 ### Vad skulle kunna förbättras ytterligare?
 
-- Införa databas (EF Core)  
-- Transaktionshantering vid order-skapande  
-- Caching för bättre prestanda  
-- Central felhantering via middleware  
-- JWT-baserad autentisering  
-- Mer avancerad validering  
+Även om lösningen fungerar bra i sitt nuvarande skick finns det flera områden
+som skulle kunna utvecklas vidare i ett större eller mer långsiktigt projekt.
 
+- Införa databas för lättare hantering av relationer mellan exempelvis orders, produkter och cart.
+- Transaktionshantering för att säkerställa att alla steg i ett orderflöde lyckas eller misslyckas tillsammans.
+- Central felhantering via middleware för att göra både koden och felsökningen tydligare.
 ---
 
 ## Avslutning
